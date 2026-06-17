@@ -1,0 +1,91 @@
+<script src="/js/Produto/alterar.js"></script>
+<style>
+  .form-page-header { margin-bottom:28px; }
+  .form-page-header h2 { font-size:1.4rem; font-weight:800; color:#1a1a1a; margin:0 0 4px; }
+  .form-page-header p  { font-size:13px; color:#999; margin:0; }
+  .vitalis-form { max-width:620px; }
+  .form-row-2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .form-group { margin-bottom:20px; }
+  .form-group label { display:block; font-size:13px; font-weight:600; color:#444; margin-bottom:7px; }
+  .form-group input,
+  .form-group select {
+    width:100%; padding:11px 14px; border:1.5px solid #ddd;
+    border-radius:9px; font-size:14px; outline:none; transition:border-color .2s; background:#fff;
+  }
+  .form-group input:focus,
+  .form-group select:focus { border-color:#1a7a4a; }
+  .img-preview-box { border:2px dashed #ddd; border-radius:10px; padding:20px; text-align:center; margin-top:8px; }
+  .img-preview-box img { max-height:140px; max-width:100%; border-radius:8px; }
+  .form-actions { display:flex; gap:12px; margin-top:28px; }
+  .btn-save { background:#1a7a4a; color:#fff; border:none; border-radius:9px; padding:11px 30px; font-size:14px; font-weight:700; cursor:pointer; transition:background .2s; }
+  .btn-save:hover { background:#145e38; }
+  .btn-back { background:#f1f1f1; color:#555; border:none; border-radius:9px; padding:11px 24px; font-size:14px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+  .btn-back:hover { background:#e0e0e0; color:#333; }
+</style>
+
+<div class="form-page-header">
+  <h2><i class="fas fa-pen me-2" style="color:#1a7a4a;"></i> Alterar produto</h2>
+  <p>Edite os dados do produto abaixo.</p>
+</div>
+
+<div class="vitalis-form">
+  <input type="hidden" id="inputId" value="<%= produtoAlter.produtoId %>">
+  <div class="form-row-2">
+    <div class="form-group">
+      <label for="inputCodigo">Código do produto</label>
+      <input type="text" id="inputCodigo" value="<%= produtoAlter.produtoCodigo %>">
+    </div>
+    <div class="form-group">
+      <label for="inputPreco">Preço (R$)</label>
+      <input type="number" id="inputPreco" value="<%= produtoAlter.produtoValor %>" step="0.01" min="0">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputNome">Nome do produto</label>
+    <input type="text" id="inputNome" value="<%= produtoAlter.produtoNome %>">
+  </div>
+  <div class="form-row-2">
+    <div class="form-group">
+      <label for="inputQtde">Quantidade em estoque</label>
+      <input type="number" id="inputQtde" value="<%= produtoAlter.produtoQuantidade %>" min="0">
+    </div>
+    <div class="form-group">
+      <label for="selMarca">Marca / Laboratório</label>
+      <select id="selMarca">
+        <option value="0">— Selecione —</option>
+        <% for(let i=0; i<listaMarcas.length; i++) { %>
+          <% if(listaMarcas[i].marcaId == produtoAlter.marcaId) { %>
+            <option selected value="<%= listaMarcas[i].marcaId %>"><%= listaMarcas[i].marcaNome %></option>
+          <% } else { %>
+            <option value="<%= listaMarcas[i].marcaId %>"><%= listaMarcas[i].marcaNome %></option>
+          <% } %>
+        <% } %>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="selCategoria">Categoria</label>
+    <select id="selCategoria">
+      <option value="0">— Selecione —</option>
+      <% for(let i=0; i<listaCategorias.length; i++) { %>
+        <% if(listaCategorias[i].categoriaId == produtoAlter.categoriaId) { %>
+          <option selected value="<%= listaCategorias[i].categoriaId %>"><%= listaCategorias[i].categoriaNome %></option>
+        <% } else { %>
+          <option value="<%= listaCategorias[i].categoriaId %>"><%= listaCategorias[i].categoriaNome %></option>
+        <% } %>
+      <% } %>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Imagem do produto</label>
+    <input type="file" class="form-control" id="inputImagem" accept="image/*">
+    <div class="img-preview-box" id="divPrevia">
+      <img id="previaImagem" src="<%= produtoAlter.produtoImagem %>" alt="Imagem atual">
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn-save" id="btnAlterar"><i class="fas fa-save"></i> Salvar alterações</button>
+    <a href="/produto" class="btn-back"><i class="fas fa-arrow-left"></i> Voltar</a>
+  </div>
+</div>

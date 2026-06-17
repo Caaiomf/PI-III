@@ -1,0 +1,45 @@
+<script src="/js/pedido/listar.js"></script>
+<style>
+  .page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+  .page-header h2 { font-size:1.4rem; font-weight:800; color:#1a1a1a; margin:0; }
+  .search-bar { display:flex; gap:10px; }
+  .search-bar input { padding:9px 16px; border:1.5px solid #ddd; border-radius:9px; font-size:14px; outline:none; width:280px; transition:border-color .2s; }
+  .search-bar input:focus { border-color:#1a7a4a; }
+  .btn-search { background:#1a7a4a; color:#fff; border:none; border-radius:9px; padding:9px 18px; font-size:14px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; }
+  .btn-search:hover { background:#145e38; }
+  .vitalis-table { width:100%; border-collapse:collapse; }
+  .vitalis-table th { padding:12px 16px; text-align:left; font-size:11px; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:.6px; border-bottom:2px solid #f0f0f0; }
+  .vitalis-table td { padding:12px 16px; font-size:14px; color:#333; border-bottom:1px solid #f5f5f5; }
+  .vitalis-table tbody tr:hover { background:#fafff9; }
+  .badge-id { background:#e8f5e9; color:#1a7a4a; border-radius:6px; padding:3px 10px; font-size:12px; font-weight:700; }
+</style>
+
+<div class="page-header">
+  <h2><i class="fas fa-shopping-bag me-2" style="color:#1a7a4a;"></i> Pedidos</h2>
+  <div class="search-bar">
+    <input type="text" id="txtBusca" placeholder="Buscar por nº do pedido ou produto...">
+    <input type="date" id="f_data_inicio">
+    <input type="date" id="f_data_fim">
+    <input type="number" id="f_min_total" placeholder="Min total" style="width:110px;">
+    <input type="number" id="f_max_total" placeholder="Max total" style="width:110px;">
+    <button class="btn-search" id="btnBuscar"><i class="fas fa-search"></i> Buscar</button>
+  </div>
+</div>
+
+<div class="table-responsive">
+  <table class="vitalis-table" id="tabelaPedidos">
+    <thead>
+      <tr>
+        <th>ID Pedido</th>
+        <th>Comprador</th>
+        <th>Endereço</th>
+        <th>Valor Total</th>
+        <th>Produto</th>
+        <th>Quantidade</th>
+        <th>Valor Unit.</th>
+        <th>Valor Produto</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>

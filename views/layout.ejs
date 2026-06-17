@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vitalis — Painel</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <link href="/css/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/adminlte.min.css">
+  <style>
+    :root { --vg: #1a7a4a; --vg-dark: #145e38; --vg-hover: rgba(26,122,74,.12); }
+
+    /* ── SIDEBAR ── */
+    .main-sidebar { background: #fff !important; border-right: 1px solid #e8e8e8; }
+    .brand-logo-vitalis {
+      display: flex; align-items: center; gap: 10px;
+      padding: 16px 18px 14px;
+      border-bottom: 1px solid #eee;
+    }
+    .brand-logo-vitalis .v-icon {
+      background: var(--vg); color: #fff;
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 900; flex-shrink: 0;
+    }
+    .brand-logo-vitalis .v-name { font-size: 18px; font-weight: 800; color: var(--vg); }
+    .brand-logo-vitalis .v-sub { font-size: 10px; color: #aaa; margin-top: -3px; font-weight: 500; }
+
+    .nav-sidebar .nav-item .nav-link {
+      color: #555 !important;
+      border-radius: 8px !important;
+      margin: 2px 8px !important;
+      padding: 9px 12px !important;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 14px; font-weight: 500;
+      transition: background .15s, color .15s;
+    }
+    .nav-sidebar .nav-item .nav-link:hover {
+      background: var(--vg-hover) !important;
+      color: var(--vg) !important;
+    }
+    .nav-sidebar .nav-item .nav-link.active,
+    .nav-sidebar .nav-item .nav-link:focus {
+      background: var(--vg) !important;
+      color: #fff !important;
+    }
+    .nav-sidebar .nav-icon { width: 18px; text-align: center; color: inherit !important; }
+
+    .sidebar-section-label {
+      font-size: 10px; font-weight: 700; color: #bbb;
+      text-transform: uppercase; letter-spacing: 1px;
+      padding: 14px 20px 4px;
+    }
+
+    /* ── TOP NAVBAR ── */
+    .main-header.navbar {
+      background: var(--vg) !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    }
+    .main-header .navbar-nav .nav-link { color: rgba(255,255,255,.9) !important; }
+    .main-header .navbar-nav .nav-link:hover { color: #fff !important; }
+    .navbar-badge { background: #fff; color: var(--vg); }
+
+    .topbar-user {
+      display: flex; align-items: center; gap: 8px;
+      color: rgba(255,255,255,.9); font-size: 14px;
+    }
+    .topbar-user-avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: rgba(255,255,255,.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700;
+    }
+
+    /* ── CONTENT ── */
+    .content-wrapper { background: #f4f6f8 !important; }
+    .vitalis-card {
+      background: #fff; border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.07);
+      padding: 28px; min-height: 680px;
+    }
+
+    /* ── FOOTER ── */
+    .main-footer {
+      background: #fff; border-top: 1px solid #eee;
+      color: #888; font-size: 12px;
+    }
+  </style>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+  <!-- TOP NAVBAR -->
+  <nav class="main-header navbar navbar-expand navbar-dark">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button">
+          <i class="fas fa-bars"></i>
+        </a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="/admin" class="nav-link" style="font-weight:600;">Painel Vitalis</a>
+      </li>
+    </ul>
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a href="/" class="nav-link" title="Ver loja">
+          <i class="fas fa-store"></i>
+          <span class="d-none d-md-inline ms-1"> Ver loja</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/login" class="nav-link" title="Sair">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="d-none d-md-inline ms-1"> Sair</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- SIDEBAR -->
+  <aside class="main-sidebar elevation-1">
+    <div class="brand-logo-vitalis">
+      <div class="v-icon">V</div>
+      <div>
+        <div class="v-name">Vitalis</div>
+        <div class="v-sub">Farmácia Digital</div>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+          <li class="nav-item">
+            <a href="/admin" class="nav-link">
+              <i class="nav-icon fas fa-home"></i><p>Início</p>
+            </a>
+          </li>
+
+          <li class="sidebar-section-label">Catálogo</li>
+
+          <li class="nav-item">
+            <a href="/produto" class="nav-link">
+              <i class="nav-icon fas fa-pills"></i><p>Produtos</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/categorias" class="nav-link">
+              <i class="nav-icon fas fa-tags"></i><p>Categorias</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/marcas" class="nav-link">
+              <i class="nav-icon fas fa-trademark"></i><p>Marcas</p>
+            </a>
+          </li>
+
+          <li class="sidebar-section-label">Vendas</li>
+
+          <li class="nav-item">
+            <a href="/pedido" class="nav-link">
+              <i class="nav-icon fas fa-shopping-bag"></i><p>Pedidos</p>
+            </a>
+          </li>
+
+          <li class="sidebar-section-label">Serviços</li>
+
+          <li class="nav-item">
+            <a href="/servicos" class="nav-link">
+              <i class="nav-icon fas fa-concierge-bell"></i><p>Serviços</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/agendamentos/admin" class="nav-link">
+              <i class="nav-icon fas fa-calendar-check"></i><p>Agendamentos</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/compras" class="nav-link">
+              <i class="nav-icon fas fa-truck"></i><p>Compras</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/fornecedores" class="nav-link">
+              <i class="nav-icon fas fa-industry"></i><p>Fornecedores</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/descartes" class="nav-link">
+              <i class="nav-icon fas fa-recycle"></i><p>Descartes</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/promocoes" class="nav-link">
+              <i class="nav-icon fas fa-percent"></i><p>Promoções</p>
+            </a>
+          </li>
+
+          <li class="sidebar-section-label">Acesso</li>
+
+          <li class="nav-item">
+            <a href="/usuarios" class="nav-link">
+              <i class="nav-icon fas fa-user"></i><p>Usuários</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/perfis" class="nav-link">
+              <i class="nav-icon fas fa-users-cog"></i><p>Perfis</p>
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+    </div>
+  </aside>
+
+  <!-- CONTENT WRAPPER -->
+  <div class="content-wrapper">
+    <div class="content-header">
+      <div class="container-fluid"></div>
+    </div>
+    <section class="content">
+      <div class="container-fluid">
+        <div class="vitalis-card">
+          <%- body %>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="main-footer">
+    <strong>Vitalis</strong> — Plataforma Farmacêutica
+    <div class="float-right d-none d-sm-inline-block">
+      <b>Versão</b> 3.0
+    </div>
+  </footer>
+
+  <aside class="control-sidebar control-sidebar-dark"></aside>
+</div>
+
+<script src="/js/jquery/jquery.min.js"></script>
+<script src="/js/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/js/adminlte.min.js"></script>
+</body>
+</html>

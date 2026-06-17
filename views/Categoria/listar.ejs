@@ -1,0 +1,57 @@
+<style>
+  .page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+  .page-header h2 { font-size:1.4rem; font-weight:800; color:#1a1a1a; margin:0; }
+  .btn-vitalis {
+    background:#1a7a4a; color:#fff; border:none; border-radius:8px;
+    padding:9px 20px; font-size:13px; font-weight:600; cursor:pointer;
+    text-decoration:none; display:inline-flex; align-items:center; gap:7px;
+    transition:background .2s;
+  }
+  .btn-vitalis:hover { background:#145e38; color:#fff; }
+  .vitalis-table { width:100%; border-collapse:collapse; }
+  .vitalis-table thead tr { border-bottom:2px solid #f0f0f0; }
+  .vitalis-table th {
+    padding:12px 16px; text-align:left; font-size:12px;
+    font-weight:700; color:#999; text-transform:uppercase; letter-spacing:.6px;
+  }
+  .vitalis-table td { padding:13px 16px; font-size:14px; color:#333; border-bottom:1px solid #f5f5f5; }
+  .vitalis-table tbody tr:hover { background:#fafff9; }
+  .badge-id {
+    background:#e8f5e9; color:#1a7a4a; border-radius:6px;
+    padding:3px 10px; font-size:12px; font-weight:700;
+  }
+  .empty-state { text-align:center; padding:60px 20px; color:#bbb; }
+  .empty-state i { font-size:48px; margin-bottom:16px; display:block; }
+</style>
+
+<div class="page-header">
+  <h2><i class="fas fa-tags me-2" style="color:#1a7a4a;"></i> Categorias cadastradas</h2>
+  <a href="/categorias/cadastro" class="btn-vitalis"><i class="fas fa-plus"></i> Nova categoria</a>
+</div>
+
+<% if (lista.length === 0) { %>
+  <div class="empty-state">
+    <i class="fas fa-tags"></i>
+    <p>Nenhuma categoria cadastrada ainda.</p>
+    <a href="/categorias/cadastro" class="btn-vitalis">Cadastrar primeira categoria</a>
+  </div>
+<% } else { %>
+  <div class="table-responsive">
+    <table class="vitalis-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nome</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% lista.map(function(value) { %>
+          <tr>
+            <td><span class="badge-id"><%= value.categoriaId %></span></td>
+            <td><strong><%= value.categoriaNome %></strong></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+<% } %>

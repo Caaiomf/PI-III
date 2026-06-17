@@ -1,0 +1,87 @@
+<script src="/js/agendamentos/admin.js"></script>
+<style>
+  .page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+  .page-header h2 { font-size:1.4rem; font-weight:800; color:#1a1a1a; margin:0; }
+  .toolbar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .toolbar input, .toolbar select, .inline-field { padding:8px 10px; border-radius:8px; border:1px solid #ddd; font-size:13px; }
+  .btn-vitalis { background:#1a7a4a; color:#fff; border:none; border-radius:8px; padding:8px 13px; font-size:13px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+  .btn-vitalis:hover { background:#145e38; color:#fff; }
+  .btn-blue { background:#1565c0; }
+  .btn-red { background:#c62828; }
+  .vitalis-table { width:100%; border-collapse:collapse; }
+  .vitalis-table th { padding:12px 14px; text-align:left; font-size:11px; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:.6px; border-bottom:2px solid #f0f0f0; }
+  .vitalis-table td { padding:12px 14px; font-size:14px; color:#333; border-bottom:1px solid #f5f5f5; vertical-align:top; }
+  .badge-status { border-radius:7px; padding:4px 8px; font-size:11px; font-weight:800; display:inline-flex; }
+  .st-pendente { background:#fff3cd; color:#8a5a00; }
+  .st-concluido { background:#e8f5e9; color:#2e7d32; }
+  .st-cancelado { background:#fce4ec; color:#c62828; }
+  .st-reagendado { background:#e3f2fd; color:#1565c0; }
+  .actions { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
+  .reschedule { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+</style>
+
+<div class="page-header">
+  <h2><i class="fas fa-calendar-check me-2" style="color:#1a7a4a;"></i> Agendamentos</h2>
+  <div class="toolbar">
+    <input id="f_q" placeholder="Cliente, profissional ou serviço" value="<%= filtros.q || '' %>">
+    <input id="f_data_inicio" type="date" value="<%= filtros.dataInicio || '' %>">
+    <input id="f_data_fim" type="date" value="<%= filtros.dataFim || '' %>">
+    <select id="f_status">
+      <option value="all">Todos</option>
+      <% ['PENDENTE','REAGENDADO','CONCLUIDO','CANCELADO'].forEach(function(st) { %>
+        <option value="<%= st %>" <%= filtros.status === st ? 'selected' : '' %>><%= st %></option>
+      <% }) %>
+    </select>
+    <button id="btnFiltrarAgendamentos" class="btn-vitalis"><i class="fas fa-search"></i> Filtrar</button>
+  </div>
+</div>
+
+<div class="table-responsive">
+  <table class="vitalis-table">
+    <thead>
+      <tr>
+        <th>Cliente</th>
+        <th>Serviço</th>
+        <th>Profissional</th>
+        <th>Quando</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (!agendamentos || agendamentos.length === 0) { %>
+        <tr><td colspan="6" style="text-align:center;color:#999;">Nenhum agendamento encontrado.</td></tr>
+      <% } %>
+      <% (agendamentos || []).forEach(function(a) {
+        const statusClass = String(a.age_status || '').toLowerCase().replace('concluido','concluido');
+      %>
+        <tr>
+          <td><strong><%= a.cliente %></strong><br><small><%= a.cliente_email || '' %></small></td>
+          <td><%= a.stp_nome %><br><small>R$ <%= parseFloat(a.stp_valor || 0).toFixed(2).replace('.', ',') %></small></td>
+          <td><%= a.profissional %></td>
+          <td>
+            <strong><%= new Date(a.age_data).toLocaleDateString('pt-BR') %> às <%= String(a.age_hora).slice(0,5) %></strong>
+            <% if (a.age_data_anterior) { %>
+              <br><small>Antes: <%= new Date(a.age_data_anterior).toLocaleDateString('pt-BR') %> às <%= String(a.age_hora_anterior).slice(0,5) %></small>
+            <% } %>
+          </td>
+          <td>
+            <span class="badge-status st-<%= statusClass %>"><%= a.age_status %></span>
+          </td>
+          <td>
+            <div class="actions">
+              <button class="btn-vitalis btn-status" data-id="<%= a.age_id %>" data-status="CONCLUIDO"><i class="fas fa-check"></i> Concluir</button>
+              <button class="btn-vitalis btn-red btn-status" data-id="<%= a.age_id %>" data-status="CANCELADO"><i class="fas fa-times"></i> Cancelar</button>
+            </div>
+            <div class="reschedule">
+              <input class="inline-field nova-data" type="date">
+              <input class="inline-field nova-hora" type="time" min="06:00" max="19:00" step="1800">
+              <input class="inline-field nova-obs" placeholder="Motivo/observação">
+              <button class="btn-vitalis btn-blue btn-reagendar" data-id="<%= a.age_id %>"><i class="fas fa-calendar-alt"></i> Reagendar</button>
+            </div>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>

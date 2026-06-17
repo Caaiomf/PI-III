@@ -1,0 +1,73 @@
+<style>
+  .page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+  .page-header h2 { font-size:1.4rem; font-weight:800; color:#1a1a1a; margin:0; }
+  .btn-vitalis { background:#1a7a4a; color:#fff; border:none; border-radius:8px; padding:9px 18px; font-size:13px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:7px; }
+  .btn-vitalis:hover { background:#145e38; color:#fff; }
+  .panel-grid { display:grid; grid-template-columns:minmax(300px, 430px) 1fr; gap:22px; align-items:start; }
+  .panel { border:1px solid #ececec; border-radius:8px; padding:18px; background:#fff; }
+  .panel-title { font-size:1rem; font-weight:800; color:#333; margin:0 0 14px; display:flex; align-items:center; gap:8px; }
+  .form-field { display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
+  .form-field label { font-size:12px; font-weight:800; color:#666; text-transform:uppercase; }
+  .form-field input { padding:9px 10px; border-radius:8px; border:1px solid #ddd; font-size:14px; }
+  .vitalis-table { width:100%; border-collapse:collapse; }
+  .vitalis-table th { padding:12px 16px; text-align:left; font-size:11px; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:.6px; border-bottom:2px solid #f0f0f0; }
+  .vitalis-table td { padding:12px 16px; font-size:14px; color:#333; border-bottom:1px solid #f5f5f5; }
+  .notice { border-radius:8px; padding:10px 12px; background:#f7faf8; border:1px solid #dfeee5; color:#1a7a4a; font-weight:700; margin-bottom:14px; }
+  @media (max-width: 900px) { .panel-grid { grid-template-columns:1fr; } }
+</style>
+
+<div class="page-header">
+  <h2><i class="fas fa-industry me-2" style="color:#1a7a4a;"></i> Fornecedores</h2>
+  <a href="/compras" class="btn-vitalis"><i class="fas fa-truck"></i> Efetuar compra</a>
+</div>
+
+<% if (mensagem) { %>
+  <div class="notice"><%= mensagem %></div>
+<% } %>
+
+<div class="panel-grid">
+  <section class="panel">
+    <h3 class="panel-title"><i class="fas fa-plus-circle"></i> Registrar fornecedor</h3>
+    <form action="/fornecedores/cadastrar" method="post">
+      <div class="form-field">
+        <label for="nome">Nome</label>
+        <input id="nome" name="nome" required>
+      </div>
+      <div class="form-field">
+        <label for="cnpj">CNPJ</label>
+        <input id="cnpj" name="cnpj">
+      </div>
+      <div class="form-field">
+        <label for="telefone">Telefone</label>
+        <input id="telefone" name="telefone">
+      </div>
+      <div class="form-field">
+        <label for="email">E-mail</label>
+        <input id="email" name="email" type="email">
+      </div>
+      <button class="btn-vitalis" style="width:100%;justify-content:center;"><i class="fas fa-save"></i> Salvar fornecedor</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h3 class="panel-title"><i class="fas fa-list"></i> Fornecedores registrados</h3>
+    <div class="table-responsive">
+      <table class="vitalis-table">
+        <thead><tr><th>Nome</th><th>CNPJ</th><th>Telefone</th><th>E-mail</th></tr></thead>
+        <tbody>
+          <% if (!fornecedores || fornecedores.length === 0) { %>
+            <tr><td colspan="4" style="text-align:center;color:#999;">Nenhum fornecedor registrado.</td></tr>
+          <% } %>
+          <% (fornecedores || []).forEach(function(f) { %>
+            <tr>
+              <td><%= f.for_nome %></td>
+              <td><%= f.for_cnpj || '-' %></td>
+              <td><%= f.for_telefone || '-' %></td>
+              <td><%= f.for_email || '-' %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

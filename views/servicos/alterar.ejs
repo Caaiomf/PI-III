@@ -1,0 +1,52 @@
+<script src="/js/servicos/alterar.js"></script>
+<style>
+  .form-page-header { margin-bottom:28px; }
+  .form-page-header h2 { font-size:1.4rem; font-weight:800; color:#1a1a1a; margin:0 0 4px; }
+  .form-page-header p  { font-size:13px; color:#999; margin:0; }
+  .vitalis-form { max-width:560px; }
+  .form-group { margin-bottom:20px; }
+  .form-group label { display:block; font-size:13px; font-weight:600; color:#444; margin-bottom:7px; }
+  .form-group input,
+  .form-group select { width:100%; padding:11px 14px; border:1.5px solid #ddd; border-radius:9px; font-size:14px; outline:none; transition:border-color .2s; background:#fff; }
+  .form-group input:focus,
+  .form-group select:focus { border-color:#1a7a4a; }
+  .form-check { display:flex; align-items:center; gap:10px; }
+  .form-check input[type=checkbox] { width:18px; height:18px; accent-color:#1a7a4a; cursor:pointer; }
+  .form-check label { font-size:14px; font-weight:500; color:#444; cursor:pointer; }
+  .form-actions { display:flex; gap:12px; margin-top:28px; }
+  .btn-save { background:#1a7a4a; color:#fff; border:none; border-radius:9px; padding:11px 30px; font-size:14px; font-weight:700; cursor:pointer; transition:background .2s; }
+  .btn-save:hover { background:#145e38; }
+  .btn-back { background:#f1f1f1; color:#555; border:none; border-radius:9px; padding:11px 24px; font-size:14px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+  .btn-back:hover { background:#e0e0e0; color:#333; }
+</style>
+
+<div class="form-page-header">
+  <h2><i class="fas fa-concierge-bell me-2" style="color:#1a7a4a;"></i> Editar serviço</h2>
+  <p>Edite os dados do serviço abaixo.</p>
+</div>
+
+<div class="vitalis-form">
+  <input id="servicoId" type="hidden" value="<%= servico.id %>">
+  <div class="form-group">
+    <label for="servicoNome">Tipo de serviço</label>
+    <input type="text" id="servicoNome" name="servicoNome" value="<%= servico.nome %>">
+  </div>
+  <div class="form-group">
+    <label for="servicoValor">Valor (R$)</label>
+    <input type="number" id="servicoValor" name="servicoValor" step="0.01" min="0" value="<%= servico.valor %>">
+  </div>
+  <div class="form-group">
+    <div class="form-check">
+      <% if(servico.ativo == 1) { %>
+        <input checked type="checkbox" id="servicoAtivo" name="servicoAtivo">
+      <% } else { %>
+        <input type="checkbox" id="servicoAtivo" name="servicoAtivo">
+      <% } %>
+      <label for="servicoAtivo">Serviço ativo</label>
+    </div>
+  </div>
+  <div class="form-actions">
+    <button class="btn-save" id="btnAlterar"><i class="fas fa-save"></i> Salvar alterações</button>
+    <a href="/servicos" class="btn-back"><i class="fas fa-arrow-left"></i> Voltar</a>
+  </div>
+</div>

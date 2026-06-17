@@ -1,0 +1,32 @@
+<style>
+  .page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+  .page-header h2 { font-size:1.4rem; font-weight:800; color:#1a1a1a; margin:0; }
+  .vitalis-table { width:100%; border-collapse:collapse; }
+  .vitalis-table th { padding:12px 16px; text-align:left; font-size:11px; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:.6px; border-bottom:2px solid #f0f0f0; }
+  .vitalis-table td { padding:13px 16px; font-size:14px; color:#333; border-bottom:1px solid #f5f5f5; }
+  .vitalis-table tbody tr:hover { background:#fafff9; }
+  .badge-id { background:#e8f5e9; color:#1a7a4a; border-radius:6px; padding:3px 10px; font-size:12px; font-weight:700; }
+</style>
+
+<div class="page-header">
+  <h2><i class="fas fa-users-cog me-2" style="color:#1a7a4a;"></i> Perfis de acesso</h2>
+</div>
+
+<div class="table-responsive">
+  <table class="vitalis-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Descrição</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for(let i=0; i<listaPerfil.length; i++) { %>
+        <tr>
+          <td><span class="badge-id"><%= listaPerfil[i].perfilId %></span></td>
+          <td><strong><%= listaPerfil[i].perfilDescricao %></strong></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

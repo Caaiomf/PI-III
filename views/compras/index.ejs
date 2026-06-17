@@ -1,0 +1,97 @@
+<script>
+  window.produtosCompra = <%- JSON.stringify((produtos || []).map(function(p) { return { id: p.produtoId, nome: p.produtoNome, estoque: p.produtoQuantidade, valor: p.produtoValor }; })) %>;
+  window.fornecedoresCompra = <%- JSON.stringify((fornecedores || []).map(function(f) { return { id: f.for_id, nome: f.for_nome }; })) %>;
+</script>
+<script src="/js/compras/index.js"></script>
+<style>
+  .page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+  .page-header h2 { font-size:1.4rem; font-weight:800; color:#1a1a1a; margin:0; }
+  .toolbar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .toolbar input, .toolbar select, .form-field input, .form-field select { padding:9px 10px; border-radius:8px; border:1px solid #ddd; font-size:14px; }
+  .btn-vitalis { background:#1a7a4a; color:#fff; border:none; border-radius:8px; padding:9px 18px; font-size:13px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:7px; }
+  .btn-vitalis:hover { background:#145e38; color:#fff; }
+  .btn-blue { background:#1565c0; }
+  .purchase-layout { display:grid; grid-template-columns:minmax(320px, 420px) 1fr; gap:22px; align-items:start; }
+  .purchase-panel { border:1px solid #ececec; border-radius:8px; padding:18px; background:#fff; }
+  .panel-title { font-size:1rem; font-weight:800; color:#333; margin:0 0 14px; display:flex; align-items:center; gap:8px; }
+  .form-field { display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
+  .form-field label { font-size:12px; font-weight:800; color:#666; text-transform:uppercase; }
+  .item-grid { display:grid; grid-template-columns:2fr 90px 110px 1fr 135px 88px; gap:8px; align-items:end; margin-bottom:8px; }
+  .item-grid select, .item-grid input { width:100%; padding:8px 10px; border-radius:8px; border:1px solid #ddd; }
+  .item-label { font-size:11px; font-weight:800; color:#888; text-transform:uppercase; margin-bottom:4px; }
+  .vitalis-table { width:100%; border-collapse:collapse; }
+  .vitalis-table th { padding:12px 16px; text-align:left; font-size:11px; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:.6px; border-bottom:2px solid #f0f0f0; }
+  .vitalis-table td { padding:12px 16px; font-size:14px; color:#333; border-bottom:1px solid #f5f5f5; }
+  .summary { background:#f7faf8; border:1px solid #dfeee5; border-radius:8px; padding:12px; color:#1a7a4a; font-weight:800; display:flex; justify-content:space-between; margin:14px 0; }
+  .btn-rem { background:#fce4ec; color:#c62828; border:none; border-radius:7px; padding:8px 10px; cursor:pointer; width:100%; }
+  .empty-help { color:#999; font-size:13px; text-align:center; padding:22px; border:1px dashed #ddd; border-radius:8px; }
+  .field-note { color:#888; font-size:12px; margin-top:4px; }
+  @media (max-width: 1000px) {
+    .purchase-layout { grid-template-columns:1fr; }
+    .item-grid { grid-template-columns:1fr 1fr; }
+  }
+</style>
+
+<div class="page-header">
+  <h2><i class="fas fa-truck me-2" style="color:#1a7a4a;"></i> Compras</h2>
+  <div class="toolbar">
+    <input id="f_fornecedor" placeholder="Filtrar fornecedor">
+    <input id="f_data_inicio" type="date">
+    <input id="f_data_fim" type="date">
+    <select id="f_status">
+      <option value="all">Todos</option>
+      <option value="recebido">Recebido</option>
+      <option value="pendente">Pendente</option>
+    </select>
+    <button id="btnFiltrarCompras" class="btn-vitalis"><i class="fas fa-search"></i> Filtrar</button>
+    <a href="/admin" class="btn-vitalis"><i class="fas fa-home"></i> Painel</a>
+  </div>
+</div>
+
+<div class="purchase-layout">
+  <section class="purchase-panel">
+    <h3 class="panel-title"><i class="fas fa-file-invoice"></i> Dados da compra</h3>
+    <div class="form-field">
+      <label for="compraFornecedor">Fornecedor</label>
+      <select id="compraFornecedor">
+        <option value="">Selecione o fornecedor</option>
+        <% (fornecedores || []).forEach(function(f) { %>
+          <option value="<%= f.for_nome %>"><%= f.for_nome %></option>
+        <% }) %>
+      </select>
+      <div class="field-note"><a href="/fornecedores">Registrar novo fornecedor</a></div>
+    </div>
+    <div class="form-field">
+      <label for="compraData">Data da compra</label>
+      <input id="compraData" type="date">
+    </div>
+    <div class="form-field">
+      <label for="compraStatus">Status</label>
+      <select id="compraStatus">
+        <option value="recebido">Recebido</option>
+        <option value="pendente">Pendente</option>
+      </select>
+    </div>
+    <div class="summary">
+      <span>Total estimado</span>
+      <span id="totalCompra">R$ 0,00</span>
+    </div>
+    <button id="btnSalvarCompra" class="btn-vitalis" style="width:100%;justify-content:center;"><i class="fas fa-save"></i> Salvar compra</button>
+  </section>
+
+  <section class="purchase-panel">
+    <h3 class="panel-title"><i class="fas fa-boxes"></i> Itens da compra</h3>
+    <div id="itensCompra"></div>
+    <button id="btnAddItem" class="btn-vitalis btn-blue" type="button"><i class="fas fa-plus"></i> Adicionar item</button>
+  </section>
+</div>
+
+<hr style="margin:28px 0;">
+<h3 class="panel-title"><i class="fas fa-list"></i> Compras registradas</h3>
+<div class="table-responsive">
+  <table class="vitalis-table" id="tbCompras">
+    <thead><tr><th>ID</th><th>Fornecedor</th><th>Lote</th><th>Validade</th><th>Data</th><th>Valor Total</th><th>Status</th><th>Ações</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+<div id="comprasPager" style="margin-top:12px;"></div>

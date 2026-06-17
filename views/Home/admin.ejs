@@ -1,0 +1,128 @@
+<style>
+  .dash-greeting { margin-bottom: 28px; }
+  .dash-greeting h2 { font-size: 1.6rem; font-weight: 800; color: #1a1a1a; margin-bottom: 4px; }
+  .dash-greeting p  { font-size: 14px; color: #888; }
+
+  .dash-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 18px; margin-bottom: 32px; }
+  .dash-card {
+    border-radius: 12px; padding: 22px 20px;
+    display: flex; align-items: center; gap: 16px;
+    color: #fff; position: relative; overflow: hidden;
+  }
+  .dash-card::after {
+    content: ''; position: absolute; right: -20px; top: -20px;
+    width: 90px; height: 90px;
+    background: rgba(255,255,255,.1); border-radius: 50%;
+  }
+  .dash-card.green  { background: linear-gradient(135deg, #1a7a4a, #21a366); }
+  .dash-card.blue   { background: linear-gradient(135deg, #1565c0, #1e88e5); }
+  .dash-card.orange { background: linear-gradient(135deg, #e65100, #fb8c00); }
+  .dash-card.purple { background: linear-gradient(135deg, #6a1b9a, #ab47bc); }
+  .dash-card.teal   { background: linear-gradient(135deg, #00695c, #26a69a); }
+  .dash-card-icon { font-size: 28px; opacity: .9; }
+  .dash-card-info h4 { font-size: 13px; opacity: .85; margin: 0 0 4px; font-weight: 500; }
+  .dash-card-info span { font-size: 26px; font-weight: 800; }
+
+  .dash-shortcuts h5 { font-size: 15px; font-weight: 700; color: #333; margin-bottom: 16px; }
+  .shortcuts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 14px; }
+  .shortcut-btn {
+    background: #f8f9fa; border: 1.5px solid #e8e8e8;
+    border-radius: 10px; padding: 18px 14px;
+    text-align: center; text-decoration: none;
+    color: #333; font-size: 13px; font-weight: 600;
+    transition: all .2s; display: flex; flex-direction: column;
+    align-items: center; gap: 10px;
+  }
+  .shortcut-btn i { font-size: 22px; color: #1a7a4a; }
+  .shortcut-btn:hover {
+    background: #1a7a4a; color: #fff; border-color: #1a7a4a;
+    transform: translateY(-3px); box-shadow: 0 6px 18px rgba(26,122,74,.25);
+  }
+  .shortcut-btn:hover i { color: #fff; }
+</style>
+
+<div class="dash-greeting">
+  <h2>Bem-vindo ao painel Vitalis</h2>
+  <p>Gerencie produtos, pedidos, categorias, marcas e clientes da farmácia.</p>
+</div>
+
+<div class="dash-cards">
+  <div class="dash-card green">
+    <div class="dash-card-icon"><i class="fas fa-pills"></i></div>
+    <div class="dash-card-info"><h4>Produtos</h4><span><a href="/produto" style="color:#fff;text-decoration:none;">Ver</a></span></div>
+  </div>
+  <div class="dash-card blue">
+    <div class="dash-card-icon"><i class="fas fa-shopping-bag"></i></div>
+    <div class="dash-card-info"><h4>Pedidos</h4><span><a href="/pedido" style="color:#fff;text-decoration:none;">Ver</a></span></div>
+  </div>
+  <div class="dash-card orange">
+    <div class="dash-card-icon"><i class="fas fa-concierge-bell"></i></div>
+    <div class="dash-card-info"><h4>Serviços</h4><span><a href="/servicos" style="color:#fff;text-decoration:none;">Ver</a></span></div>
+  </div>
+  <div class="dash-card purple">
+    <div class="dash-card-icon"><i class="fas fa-truck"></i></div>
+    <div class="dash-card-info"><h4>Compras</h4><span><a href="/compras" style="color:#fff;text-decoration:none;">Ver</a></span></div>
+  </div>
+  <div class="dash-card teal">
+    <div class="dash-card-icon"><i class="fas fa-users"></i></div>
+    <div class="dash-card-info"><h4>Usuários</h4><span><a href="/usuarios" style="color:#fff;text-decoration:none;">Ver</a></span></div>
+  </div>
+  <div class="dash-card" style="background: linear-gradient(135deg, #f57c00, #ffa726);">
+    <div class="dash-card-icon"><i class="fas fa-chart-bar"></i></div>
+    <div class="dash-card-info"><h4>Relatórios</h4><span><a href="/relatorios" style="color:#fff;text-decoration:none;">Ver</a></span></div>
+  </div>
+</div>
+
+<div class="dash-shortcuts">
+  <h5>Ações rápidas</h5>
+  <div class="shortcuts-grid">
+    <a href="/produto" class="shortcut-btn">
+      <i class="fas fa-pills"></i> Produtos
+    </a>
+    <a href="/produto/cadastro" class="shortcut-btn">
+      <i class="fas fa-plus-circle"></i> Adicionar produto
+    </a>
+    <a href="/pedido" class="shortcut-btn">
+      <i class="fas fa-clipboard-list"></i> Pedidos
+    </a>
+    <a href="/servicos" class="shortcut-btn">
+      <i class="fas fa-calendar-check"></i> Serviços oferecidos
+    </a>
+    <a href="/agendamentos/admin" class="shortcut-btn">
+      <i class="fas fa-calendar-check"></i> Agendamentos
+    </a>
+    <a href="/compras" class="shortcut-btn">
+      <i class="fas fa-truck"></i> Efetuar compra
+    </a>
+    <a href="/fornecedores" class="shortcut-btn">
+      <i class="fas fa-industry"></i> Fornecedores
+    </a>
+    <a href="/descartes" class="shortcut-btn">
+      <i class="fas fa-recycle"></i> Descartes
+    </a>
+    <a href="/promocoes" class="shortcut-btn">
+      <i class="fas fa-percent"></i> Promoções
+    </a>
+    <a href="/categorias" class="shortcut-btn">
+      <i class="fas fa-tags"></i> Categorias
+    </a>
+    <a href="/categorias/cadastro" class="shortcut-btn">
+      <i class="fas fa-plus"></i> Adicionar categoria
+    </a>
+    <a href="/marcas" class="shortcut-btn">
+      <i class="fas fa-trademark"></i> Marcas
+    </a>
+    <a href="/marcas/cadastro" class="shortcut-btn">
+      <i class="fas fa-plus"></i> Adicionar marca
+    </a>
+    <a href="/usuarios" class="shortcut-btn">
+      <i class="fas fa-user"></i> Clientes e usuários
+    </a>
+    <a href="/usuarios/cadastrar" class="shortcut-btn">
+      <i class="fas fa-user-plus"></i> Adicionar cliente
+    </a>
+    <a href="/relatorios" class="shortcut-btn">
+      <i class="fas fa-chart-bar"></i> Relatórios
+    </a>
+  </div>
+</div>

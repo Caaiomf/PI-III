@@ -1,0 +1,96 @@
+<script src="/js/usuarios/listagem.js"></script>
+<style>
+  .page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+  .page-header h2 { font-size:1.4rem; font-weight:800; color:#1a1a1a; margin:0; }
+  .btn-vitalis { background:#1a7a4a; color:#fff; border:none; border-radius:8px; padding:9px 20px; font-size:13px; font-weight:600; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:7px; transition:background .2s; }
+  .btn-vitalis:hover { background:#145e38; color:#fff; }
+  .filters { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .filters input, .filters select { padding:8px 10px; border-radius:8px; border:1px solid #ddd; }
+  .vitalis-table { width:100%; border-collapse:collapse; }
+  .vitalis-table th { padding:12px 16px; text-align:left; font-size:11px; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:.6px; border-bottom:2px solid #f0f0f0; }
+  .vitalis-table td { padding:12px 16px; font-size:14px; color:#333; border-bottom:1px solid #f5f5f5; vertical-align:middle; }
+  .vitalis-table tbody tr:hover { background:#fafff9; }
+  .badge-id { background:#e8f5e9; color:#1a7a4a; border-radius:6px; padding:3px 10px; font-size:12px; font-weight:700; }
+  .badge-ativo { background:#e8f5e9; color:#2e7d32; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:700; }
+  .badge-inativo { background:#fce4ec; color:#c62828; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:700; }
+  .user-avatar { width:34px; height:34px; border-radius:50%; background:#e8f5e9; color:#1a7a4a; display:inline-flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; margin-right:8px; }
+  .btn-action { border:none; border-radius:7px; padding:6px 12px; cursor:pointer; font-size:13px; display:inline-flex; align-items:center; gap:5px; text-decoration:none; transition:all .15s; }
+  .btn-edit { background:#e3f2fd; color:#1565c0; }
+  .btn-edit:hover { background:#1565c0; color:#fff; }
+  .btn-del { background:#fce4ec; color:#c62828; }
+  .btn-del:hover { background:#c62828; color:#fff; }
+  .perfil-section { margin-bottom:28px; }
+  .perfil-section h3 { font-size:1rem; font-weight:800; color:#333; margin:18px 0 12px; display:flex; align-items:center; gap:8px; }
+</style>
+
+<div class="page-header">
+  <h2><i class="fas fa-users me-2" style="color:#1a7a4a;"></i> Usuários cadastrados</h2>
+  <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+    <div class="filters">
+      <input id="f_q" placeholder="Buscar por nome ou e-mail" value="<%= (filtros && filtros.q) ? filtros.q : '' %>">
+      <select id="f_status">
+        <option value="all">Todos</option>
+        <option value="1" <%= (filtros && filtros.status=='1')?'selected':'' %>>Ativos</option>
+        <option value="0" <%= (filtros && filtros.status=='0')?'selected':'' %>>Inativos</option>
+      </select>
+      <select id="f_perfil">
+        <option value="0">Todos perfis</option>
+        <% listaPerfil.forEach(function(p){ %>
+          <option value="<%= p.perfilId %>" <%= (filtros && filtros.perfil==p.perfilId)?'selected':'' %>><%= p.perfilDescricao %></option>
+        <% }) %>
+      </select>
+      <select id="f_order">
+        <option value="usu_id">Ordenar: ID</option>
+        <option value="usu_nome" <%= (filtros && filtros.order=='usu_nome')?'selected':'' %>>Nome</option>
+        <option value="usu_email" <%= (filtros && filtros.order=='usu_email')?'selected':'' %>>E-mail</option>
+      </select>
+    </div>
+    <a href="/usuarios/cadastrar" class="btn-vitalis"><i class="fas fa-user-plus"></i> Novo usuário</a>
+  </div>
+</div>
+
+<%
+  const secoes = [
+    { titulo: 'Funcionários', icone: 'fa-briefcase', itens: grupos.funcionarios },
+    { titulo: 'Clientes', icone: 'fa-user', itens: grupos.clientes },
+    { titulo: 'Profissionais', icone: 'fa-user-md', itens: grupos.profissionais },
+    { titulo: 'Outros perfis', icone: 'fa-users', itens: grupos.outros }
+  ];
+%>
+
+<% secoes.forEach(function(secao) { %>
+  <div class="perfil-section">
+    <h3><i class="fas <%= secao.icone %>" style="color:#1a7a4a;"></i> <%= secao.titulo %></h3>
+    <div class="table-responsive">
+      <table class="vitalis-table">
+        <thead>
+          <tr><th>#</th><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Status</th><th>Ações</th></tr>
+        </thead>
+        <tbody>
+          <% if (!secao.itens || secao.itens.length === 0) { %>
+            <tr><td colspan="6" style="text-align:center;color:#999;">Nenhum registro neste perfil.</td></tr>
+          <% } %>
+          <% (secao.itens || []).forEach(function(usuario) { %>
+            <tr>
+              <td><span class="badge-id"><%= usuario.usuarioId %></span></td>
+              <td><span class="user-avatar"><%= usuario.usuarioNome.charAt(0).toUpperCase() %></span><strong><%= usuario.usuarioNome %></strong></td>
+              <td><%= usuario.usuarioEmail %></td>
+              <td><%= usuario.perfilDescricao || usuario.perfilId %></td>
+              <td>
+                <% if(usuario.usuarioAtivo == 'S' || usuario.usuarioAtivo == 1) { %>
+                  <span class="badge-ativo"><i class="fas fa-check-circle"></i> Ativo</span>
+                <% } else { %>
+                  <span class="badge-inativo"><i class="fas fa-times-circle"></i> Inativo</span>
+                <% } %>
+              </td>
+              <td>
+                <a href="/usuarios/alterar/<%= usuario.usuarioId %>" class="btn-action btn-edit"><i class="fas fa-pen"></i> Editar</a>
+                <button data-codigoexclusao="<%= usuario.usuarioId %>" class="btn-action btn-del btnExclusao"><i class="fas fa-trash"></i> Excluir</button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% }) %>

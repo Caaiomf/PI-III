@@ -1,0 +1,69 @@
+<script src="/js/usuarios/alterar.js"></script>
+<style>
+  .form-page-header { margin-bottom:28px; }
+  .form-page-header h2 { font-size:1.4rem; font-weight:800; color:#1a1a1a; margin:0 0 4px; }
+  .form-page-header p  { font-size:13px; color:#999; margin:0; }
+  .vitalis-form { max-width:560px; }
+  .form-group { margin-bottom:20px; }
+  .form-group label { display:block; font-size:13px; font-weight:600; color:#444; margin-bottom:7px; }
+  .form-group input,
+  .form-group select { width:100%; padding:11px 14px; border:1.5px solid #ddd; border-radius:9px; font-size:14px; outline:none; transition:border-color .2s; background:#fff; }
+  .form-group input:focus,
+  .form-group select:focus { border-color:#1a7a4a; }
+  .form-check { display:flex; align-items:center; gap:10px; }
+  .form-check input[type=checkbox] { width:18px; height:18px; accent-color:#1a7a4a; cursor:pointer; }
+  .form-check label { font-size:14px; font-weight:500; color:#444; cursor:pointer; }
+  .form-actions { display:flex; gap:12px; margin-top:28px; }
+  .btn-save { background:#1a7a4a; color:#fff; border:none; border-radius:9px; padding:11px 30px; font-size:14px; font-weight:700; cursor:pointer; transition:background .2s; }
+  .btn-save:hover { background:#145e38; }
+  .btn-back { background:#f1f1f1; color:#555; border:none; border-radius:9px; padding:11px 24px; font-size:14px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+  .btn-back:hover { background:#e0e0e0; color:#333; }
+</style>
+
+<div class="form-page-header">
+  <h2><i class="fas fa-user-edit me-2" style="color:#1a7a4a;"></i> Alterar usuário</h2>
+  <p>Edite os dados do usuário abaixo.</p>
+</div>
+
+<div class="vitalis-form">
+  <input id="usuarioId" type="hidden" value="<%= usuario.usuarioId %>">
+  <div class="form-group">
+    <label for="usuarioNome">Nome completo</label>
+    <input type="text" id="usuarioNome" name="usuarioNome" value="<%= usuario.usuarioNome %>">
+  </div>
+  <div class="form-group">
+    <label for="usuarioEmail">E-mail</label>
+    <input type="email" id="usuarioEmail" name="usuarioEmail" value="<%= usuario.usuarioEmail %>">
+  </div>
+  <div class="form-group">
+    <label for="usuarioSenha">Senha</label>
+    <input type="password" id="usuarioSenha" name="usuarioSenha" value="<%= usuario.usuarioSenha %>">
+  </div>
+  <div class="form-group">
+    <label for="usuarioPerfil">Perfil de acesso</label>
+    <select id="usuarioPerfil" name="usuarioPerfil">
+      <option value="0">— Selecione —</option>
+      <% for(let i=0; i<listaPerfil.length; i++) { %>
+        <% if(usuario.perfilId == listaPerfil[i].perfilId) { %>
+          <option selected value="<%= listaPerfil[i].perfilId %>"><%= listaPerfil[i].perfilDescricao %></option>
+        <% } else { %>
+          <option value="<%= listaPerfil[i].perfilId %>"><%= listaPerfil[i].perfilDescricao %></option>
+        <% } %>
+      <% } %>
+    </select>
+  </div>
+  <div class="form-group">
+    <div class="form-check">
+      <% if(usuario.usuarioAtivo == 'S' || usuario.usuarioAtivo == 1) { %>
+        <input checked type="checkbox" id="usuarioAtivo" name="usuarioAtivo">
+      <% } else { %>
+        <input type="checkbox" id="usuarioAtivo" name="usuarioAtivo">
+      <% } %>
+      <label for="usuarioAtivo">Usuário ativo</label>
+    </div>
+  </div>
+  <div class="form-actions">
+    <button class="btn-save" id="btnAlterar"><i class="fas fa-save"></i> Salvar alterações</button>
+    <a href="/usuarios" class="btn-back"><i class="fas fa-arrow-left"></i> Voltar</a>
+  </div>
+</div>

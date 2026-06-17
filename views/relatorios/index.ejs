@@ -1,0 +1,301 @@
+<div class="container mt-4">
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <h1>📊 Relatórios - Vitalis</h1>
+      <p class="text-muted">Análise e acompanhamento de dados do sistema</p>
+    </div>
+  </div>
+
+  <!-- Cards de Acesso Rápido aos Relatórios -->
+  <div class="row mb-4">
+    <div class="col-md-6 col-lg-3 mb-3">
+      <div class="card h-100 cursor-pointer" onclick="abrirRelatorio('estoque')">
+        <div class="card-body text-center">
+          <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+          <h5 class="card-title">Estoque Baixo</h5>
+          <p class="card-text small">Produtos com quantidade crítica</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-3">
+      <div class="card h-100 cursor-pointer" onclick="abrirRelatorio('vendas')">
+        <div class="card-body text-center">
+          <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+          <h5 class="card-title">Vendas por Período</h5>
+          <p class="card-text small">Análise de vendas por datas</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-3">
+      <div class="card h-100 cursor-pointer" onclick="abrirRelatorio('produtos')">
+        <div class="card-body text-center">
+          <i class="fas fa-star fa-3x text-warning mb-3"></i>
+          <h5 class="card-title">Produtos Mais Vendidos</h5>
+          <p class="card-text small">Top 20 produtos em vendas</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-3">
+      <div class="card h-100 cursor-pointer" onclick="abrirRelatorio('servicos')">
+        <div class="card-body text-center">
+          <i class="fas fa-wrench fa-3x text-info mb-3"></i>
+          <h5 class="card-title">Serviços Cadastrados</h5>
+          <p class="card-text small">Tipos de serviços disponíveis</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-3">
+      <div class="card h-100 cursor-pointer" onclick="abrirRelatorio('agendamentos')">
+        <div class="card-body text-center">
+          <i class="fas fa-calendar-check fa-3x text-primary mb-3"></i>
+          <h5 class="card-title">Agendamentos por Período</h5>
+          <p class="card-text small">Serviços agendados por data e status</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Relatórios -->
+  <div id="modalRelatorio" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tituloRelatorio">Relatório</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Filtros -->
+          <div class="row mb-3" id="filtrosContainer">
+            <div class="col-md-6" id="filtroDataInicio" style="display:none;">
+              <label for="dataInicio" class="form-label">Data Início</label>
+              <input type="date" class="form-control" id="dataInicio">
+            </div>
+            <div class="col-md-6" id="filtroDataFim" style="display:none;">
+              <label for="dataFim" class="form-label">Data Fim</label>
+              <input type="date" class="form-control" id="dataFim">
+            </div>
+
+            <!-- Filtros específicos para serviços -->
+            <div class="col-md-6" id="filtroServicoStatus" style="display:none; margin-top:8px;">
+              <label for="servicoStatus" class="form-label">Status</label>
+              <select id="servicoStatus" class="form-control">
+                <option value="">Todos</option>
+                <option value="1">Ativo</option>
+                <option value="0">Inativo</option>
+              </select>
+            </div>
+            <div class="col-md-6" id="filtroServicoQuery" style="display:none; margin-top:8px;">
+              <label for="servicoQuery" class="form-label">Buscar</label>
+              <input type="text" id="servicoQuery" class="form-control" placeholder="Nome do serviço">
+            </div>
+          </div>
+
+          <!-- Botões de Ação -->
+          <div class="mb-3">
+            <button class="btn btn-primary" onclick="gerarRelatorio()">
+              <i class="fas fa-search"></i> Gerar Relatório
+            </button>
+            <button class="btn btn-success" onclick="exportarCSV()" id="btnExportar" style="display:none;">
+              <i class="fas fa-download"></i> Exportar CSV
+            </button>
+          </div>
+
+          <!-- Tabela de Resultados -->
+          <div id="resultados" style="max-height: 400px; overflow-y: auto;">
+            <div class="alert alert-info">Clique em "Gerar Relatório" para visualizar os dados</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+
+  .cursor-pointer {
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  let relatorioAtual = null;
+
+  function abrirRelatorio(tipo) {
+    relatorioAtual = tipo;
+    const titulos = {
+      estoque: 'Produtos com Estoque Baixo',
+      vendas: 'Vendas por Período',
+      produtos: 'Produtos Mais Vendidos',
+      servicos: 'Tipos de Serviços Cadastrados',
+      agendamentos: 'Agendamentos por Período'
+    };
+
+    document.getElementById('tituloRelatorio').textContent = titulos[tipo];
+    const statusSelect = document.getElementById('servicoStatus');
+    if(tipo === 'agendamentos') {
+      statusSelect.innerHTML = '<option value="">Todos</option><option value="PENDENTE">Pendente</option><option value="REAGENDADO">Reagendado</option><option value="CONCLUIDO">Concluído</option><option value="CANCELADO">Cancelado</option>';
+    } else {
+      statusSelect.innerHTML = '<option value="">Todos</option><option value="1">Ativo</option><option value="0">Inativo</option>';
+    }
+    
+    // Mostrar/ocultar filtros de data
+    const temFiltros = ['vendas', 'produtos', 'agendamentos'].includes(tipo);
+    document.getElementById('filtroDataInicio').style.display = temFiltros ? 'block' : 'none';
+    document.getElementById('filtroDataFim').style.display = temFiltros ? 'block' : 'none';
+
+    // Mostrar/ocultar filtros de serviços
+    const isServicos = tipo === 'servicos' || tipo === 'agendamentos';
+    document.getElementById('filtroServicoStatus').style.display = isServicos ? 'block' : 'none';
+    document.getElementById('filtroServicoQuery').style.display = isServicos ? 'block' : 'none';
+
+    if (temFiltros) {
+      // Definir datas padrão (últimos 30 dias)
+      const hoje = new Date();
+      const trinta = new Date(hoje.getTime() - 30 * 24 * 60 * 60 * 1000);
+      
+      document.getElementById('dataInicio').value = trinta.toISOString().split('T')[0];
+      document.getElementById('dataFim').value = hoje.toISOString().split('T')[0];
+    }
+
+    document.getElementById('resultados').innerHTML = '<div class="alert alert-info">Clique em "Gerar Relatório" para visualizar os dados</div>';
+    document.getElementById('btnExportar').style.display = 'none';
+
+    const modal = new bootstrap.Modal(document.getElementById('modalRelatorio'));
+    modal.show();
+  }
+
+  function gerarRelatorio() {
+    const temFiltros = ['vendas', 'produtos', 'agendamentos'].includes(relatorioAtual);
+
+    let url = `/relatorios/gerar/${relatorioAtual}`;
+
+    const params = [];
+
+    if (temFiltros) {
+      const dataInicio = document.getElementById('dataInicio').value;
+      const dataFim = document.getElementById('dataFim').value;
+
+      if (!dataInicio || !dataFim) {
+        alert('Por favor, selecione as datas');
+        return;
+      }
+
+      params.push(`dataInicio=${dataInicio}`);
+      params.push(`dataFim=${dataFim}`);
+    }
+
+    // filtros para serviços
+    if (relatorioAtual === 'servicos' || relatorioAtual === 'agendamentos') {
+      const status = document.getElementById('servicoStatus').value;
+      const q = document.getElementById('servicoQuery').value;
+      if (status !== '') params.push(`status=${status}`);
+      if (q && q.trim() !== '') params.push(`q=${encodeURIComponent(q.trim())}`);
+    }
+
+    if (params.length > 0) url += '?' + params.join('&');
+
+    fetch(url)
+      .then(response => response.json())
+      .then(dados => {
+        if (dados.erro) {
+          alert('Erro: ' + dados.erro);
+          return;
+        }
+        exibirResultados(dados, relatorioAtual);
+        document.getElementById('btnExportar').style.display = 'inline-block';
+      })
+      .catch(erro => {
+        console.error('Erro:', erro);
+        alert('Erro ao gerar relatório');
+      });
+  }
+
+  // aplicar filtros automaticamente ao alterar campos
+  document.addEventListener('DOMContentLoaded', function() {
+    const debounce = (fn, wait) => {
+      let t;
+      return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
+    };
+
+    const applyIfOpen = debounce(function() {
+      if (!relatorioAtual) return;
+      // se modal aberto, gera relatório automaticamente
+      const modalEl = document.getElementById('modalRelatorio');
+      if (modalEl && modalEl.classList.contains('show')) {
+        gerarRelatorio();
+      }
+    }, 400);
+
+    ['dataInicio','dataFim','servicoStatus','servicoQuery'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('change', applyIfOpen);
+      el.addEventListener('input', applyIfOpen);
+    });
+  });
+
+  function exibirResultados(dados, tipo) {
+    if (!dados || dados.length === 0) {
+      document.getElementById('resultados').innerHTML = '<div class="alert alert-warning">Nenhum resultado encontrado</div>';
+      return;
+    }
+
+    const headers = Object.keys(dados[0]);
+    let html = '<table class="table table-sm table-striped">';
+    html += '<thead><tr>';
+    
+    headers.forEach(header => {
+      html += `<th>${header}</th>`;
+    });
+    html += '</tr></thead><tbody>';
+
+    dados.forEach(linha => {
+      html += '<tr>';
+      headers.forEach(header => {
+        let valor = linha[header];
+        if (typeof valor === 'number' && (header.toLowerCase().includes('valor') || header.toLowerCase().includes('total'))) {
+          valor = 'R$ ' + parseFloat(valor).toFixed(2);
+        }
+        html += `<td>${valor || '-'}</td>`;
+      });
+      html += '</tr>';
+    });
+
+    html += '</tbody></table>';
+    document.getElementById('resultados').innerHTML = html;
+  }
+
+  function exportarCSV() {
+    const temFiltros = ['vendas', 'produtos', 'agendamentos'].includes(relatorioAtual);
+    
+    let url = `/relatorios/exportar?relatorio=${relatorioAtual}`;
+
+    if (temFiltros) {
+      const dataInicio = document.getElementById('dataInicio').value;
+      const dataFim = document.getElementById('dataFim').value;
+      url += `&dataInicio=${dataInicio}&dataFim=${dataFim}`;
+    }
+    if (relatorioAtual === 'servicos' || relatorioAtual === 'agendamentos') {
+      const status = document.getElementById('servicoStatus').value;
+      const q = document.getElementById('servicoQuery').value;
+      if (status !== '') url += `&status=${status}`;
+      if (q && q.trim() !== '') url += `&q=${encodeURIComponent(q.trim())}`;
+    }
+    
+    window.location.href = url;
+  }
+</script>

@@ -1,0 +1,139 @@
+<style>
+  .page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+  .page-header h2 { font-size:1.4rem; font-weight:800; color:#1a1a1a; margin:0; }
+  .btn-vitalis { background:#1a7a4a; color:#fff; border:none; border-radius:8px; padding:9px 18px; font-size:13px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:7px; }
+  .btn-vitalis:hover { background:#145e38; color:#fff; }
+  .panel-grid { display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start; margin-bottom:26px; }
+  .panel { border:1px solid #ececec; border-radius:8px; padding:18px; background:#fff; }
+  .panel-title { font-size:1rem; font-weight:800; color:#333; margin:0 0 14px; display:flex; align-items:center; gap:8px; }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .form-field { display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
+  .form-field label { font-size:12px; font-weight:800; color:#666; text-transform:uppercase; }
+  .form-field input, .form-field select, .form-field textarea { padding:9px 10px; border-radius:8px; border:1px solid #ddd; font-size:14px; }
+  .form-field textarea { min-height:76px; resize:vertical; }
+  .vitalis-table { width:100%; border-collapse:collapse; }
+  .vitalis-table th { padding:12px 16px; text-align:left; font-size:11px; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:.6px; border-bottom:2px solid #f0f0f0; }
+  .vitalis-table td { padding:12px 16px; font-size:14px; color:#333; border-bottom:1px solid #f5f5f5; }
+  .notice { border-radius:8px; padding:10px 12px; background:#f7faf8; border:1px solid #dfeee5; color:#1a7a4a; font-weight:700; margin-bottom:14px; }
+  .badge-lote { display:inline-flex; padding:5px 8px; border-radius:7px; background:#eef7f1; color:#1a7a4a; font-weight:800; font-size:12px; }
+  .danger-date { color:#c62828; font-weight:800; }
+  @media (max-width: 950px) { .panel-grid, .form-row { grid-template-columns:1fr; } }
+</style>
+
+<div class="page-header">
+  <h2><i class="fas fa-recycle me-2" style="color:#1a7a4a;"></i> Descartes e lotes</h2>
+  <a href="/compras" class="btn-vitalis"><i class="fas fa-truck"></i> Compras</a>
+</div>
+
+<% if (mensagem) { %>
+  <div class="notice"><%= mensagem %></div>
+<% } %>
+
+<div class="panel-grid">
+  <section class="panel">
+    <h3 class="panel-title"><i class="fas fa-building"></i> Empresa responsável</h3>
+    <form action="/descartes/empresas/cadastrar" method="post">
+      <div class="form-field">
+        <label for="nome">Nome</label>
+        <input id="nome" name="nome" required>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="cnpj">CNPJ</label>
+          <input id="cnpj" name="cnpj">
+        </div>
+        <div class="form-field">
+          <label for="telefone">Telefone</label>
+          <input id="telefone" name="telefone">
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="email">E-mail</label>
+        <input id="email" name="email" type="email">
+      </div>
+      <button class="btn-vitalis" style="width:100%;justify-content:center;"><i class="fas fa-save"></i> Salvar empresa</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h3 class="panel-title"><i class="fas fa-clipboard-check"></i> Registrar descarte</h3>
+    <form action="/descartes/registrar" method="post">
+      <div class="form-field">
+        <label for="loteSelect">Lote</label>
+        <select id="loteSelect" required>
+          <option value="">Selecione um lote</option>
+          <% (lotes || []).forEach(function(l) { %>
+            <option value="<%= l.prd_id %>|<%= l.validade ? new Date(l.validade).toISOString().slice(0,10) : '' %>">
+              <%= l.prd_nome %> - <%= l.lote %> - <%= l.validade ? new Date(l.validade).toLocaleDateString('pt-BR') : '-' %>
+            </option>
+          <% }) %>
+        </select>
+        <input type="hidden" name="produtoId" id="produtoId">
+        <input type="hidden" name="validade" id="validade">
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="empresa">Empresa</label>
+          <select id="empresa" name="empresa" required>
+            <option value="">Selecione</option>
+            <% (empresas || []).forEach(function(e) { %>
+              <option value="<%= e.dem_nome %>"><%= e.dem_nome %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="quantidade">Quantidade</label>
+          <input id="quantidade" name="quantidade" type="number" min="1" required>
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="motivo">Motivo</label>
+        <select id="motivo" name="motivo">
+          <option value="VENCIDO">Vencido</option>
+          <option value="DANIFICADO">Danificado</option>
+          <option value="CONTAMINADO">Contaminado</option>
+          <option value="OUTRO">Outro</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label for="observacao">Observação</label>
+        <textarea id="observacao" name="observacao"></textarea>
+      </div>
+      <button class="btn-vitalis" style="width:100%;justify-content:center;"><i class="fas fa-check"></i> Registrar descarte</button>
+    </form>
+  </section>
+</div>
+
+<section class="panel">
+  <h3 class="panel-title"><i class="fas fa-hourglass-half"></i> Lotes por vencimento</h3>
+  <div class="table-responsive">
+    <table class="vitalis-table">
+      <thead><tr><th>Produto</th><th>Lote</th><th>Origem</th><th>Quantidade</th><th>Validade</th></tr></thead>
+      <tbody>
+        <% if (!lotes || lotes.length === 0) { %>
+          <tr><td colspan="5" style="text-align:center;color:#999;">Nenhum lote com validade registrada.</td></tr>
+        <% } %>
+        <% (lotes || []).forEach(function(l) {
+          const validade = l.validade ? new Date(l.validade) : null;
+          const dias = validade ? Math.ceil((validade.getTime() - Date.now()) / 86400000) : 9999;
+        %>
+          <tr>
+            <td><%= l.prd_nome %></td>
+            <td><span class="badge-lote"><%= l.lote %></span></td>
+            <td><%= l.origem %></td>
+            <td><%= l.quantidade %></td>
+            <td class="<%= dias <= 30 ? 'danger-date' : '' %>"><%= validade ? validade.toLocaleDateString('pt-BR') : '-' %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<script>
+  document.getElementById('loteSelect').addEventListener('change', function() {
+    const partes = this.value.split('|');
+    document.getElementById('produtoId').value = partes[0] || '';
+    document.getElementById('validade').value = partes[1] || '';
+  });
+</script>

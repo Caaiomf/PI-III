@@ -1,0 +1,51 @@
+<style>
+  .form-page-header { margin-bottom:28px; }
+  .form-page-header h2 { font-size:1.4rem; font-weight:800; color:#1a1a1a; margin:0 0 4px; }
+  .form-page-header p { font-size:13px; color:#999; margin:0; }
+  .vitalis-form { max-width:520px; }
+  .form-group { margin-bottom:20px; }
+  .form-group label { display:block; font-size:13px; font-weight:600; color:#444; margin-bottom:7px; }
+  .form-group input {
+    width:100%; padding:11px 14px; border:1.5px solid #ddd;
+    border-radius:9px; font-size:14px; outline:none; transition:border-color .2s;
+  }
+  .form-group input:focus { border-color:#1a7a4a; }
+  .form-actions { display:flex; gap:12px; margin-top:28px; }
+  .btn-save {
+    background:#1a7a4a; color:#fff; border:none; border-radius:9px;
+    padding:11px 30px; font-size:14px; font-weight:700; cursor:pointer;
+  }
+  .btn-save:hover { background:#145e38; }
+  .btn-back {
+    background:#f1f1f1; color:#555; border:none; border-radius:9px;
+    padding:11px 24px; font-size:14px; text-decoration:none;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .alert-error {
+    background:#fff3f3; border:1px solid #f5c6c6; color:#c0392b;
+    border-radius:8px; padding:10px 14px; font-size:13px; margin-bottom:18px;
+  }
+</style>
+
+<div class="form-page-header">
+  <h2><i class="fas fa-tags me-2" style="color:#1a7a4a;"></i> Nova categoria</h2>
+  <p>Cadastre uma categoria para organizar os produtos.</p>
+</div>
+
+<div class="vitalis-form">
+  <% if (msg) { %>
+    <div class="alert-error"><i class="fas fa-exclamation-circle"></i> <%= msg %></div>
+  <% } %>
+
+  <form action="/categorias/cadastro" method="post">
+    <div class="form-group">
+      <label for="nome">Nome da categoria</label>
+      <input type="text" id="nome" name="nome" placeholder="Ex: Medicamentos" required>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-save" type="submit"><i class="fas fa-save"></i> Gravar categoria</button>
+      <a href="/categorias" class="btn-back"><i class="fas fa-arrow-left"></i> Voltar</a>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,71 @@
+<style>
+  .page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+  .page-header h2 { font-size:1.4rem; font-weight:800; color:#1a1a1a; margin:0; }
+  .btn-vitalis { background:#1a7a4a; color:#fff; border:none; border-radius:8px; padding:9px 18px; font-size:13px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:7px; }
+  .btn-vitalis:hover { background:#145e38; color:#fff; }
+  .btn-outline { background:#fff; color:#c62828; border:1px solid #f3b8b8; }
+  .panel { border:1px solid #ececec; border-radius:8px; padding:18px; background:#fff; }
+  .panel-title { font-size:1rem; font-weight:800; color:#333; margin:0 0 14px; display:flex; align-items:center; gap:8px; }
+  .vitalis-table { width:100%; border-collapse:collapse; }
+  .vitalis-table th { padding:12px 14px; text-align:left; font-size:11px; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:.6px; border-bottom:2px solid #f0f0f0; }
+  .vitalis-table td { padding:12px 14px; font-size:14px; color:#333; border-bottom:1px solid #f5f5f5; vertical-align:middle; }
+  .promo-form { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .promo-form input { padding:8px 10px; border-radius:8px; border:1px solid #ddd; font-size:14px; }
+  .badge-lote { display:inline-flex; padding:5px 8px; border-radius:7px; background:#eef7f1; color:#1a7a4a; font-weight:800; font-size:12px; }
+  .danger-date { color:#c62828; font-weight:800; }
+  .notice { border-radius:8px; padding:10px 12px; background:#f7faf8; border:1px solid #dfeee5; color:#1a7a4a; font-weight:700; margin-bottom:14px; }
+</style>
+
+<div class="page-header">
+  <h2><i class="fas fa-percent me-2" style="color:#1a7a4a;"></i> Promoções por validade</h2>
+  <a href="/descartes" class="btn-vitalis"><i class="fas fa-recycle"></i> Ver descartes</a>
+</div>
+
+<% if (mensagem) { %>
+  <div class="notice"><%= mensagem %></div>
+<% } %>
+
+<section class="panel">
+  <h3 class="panel-title"><i class="fas fa-clock"></i> Produtos com lote vencendo em até 60 dias</h3>
+  <div class="table-responsive">
+    <table class="vitalis-table">
+      <thead>
+        <tr>
+          <th>Produto</th>
+          <th>Lote</th>
+          <th>Quantidade</th>
+          <th>Validade</th>
+          <th>Definir promoção</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (!lotes || lotes.length === 0) { %>
+          <tr><td colspan="5" style="text-align:center;color:#999;">Nenhum lote próximo do vencimento.</td></tr>
+        <% } %>
+        <% (lotes || []).forEach(function(lote) {
+          const validade = lote.validade ? new Date(lote.validade) : null;
+          const dias = validade ? Math.ceil((validade.getTime() - Date.now()) / 86400000) : 0;
+        %>
+          <tr>
+            <td><%= lote.prd_nome %></td>
+            <td><span class="badge-lote"><%= lote.lote %></span></td>
+            <td><%= lote.quantidade %></td>
+            <td class="<%= dias <= 30 ? 'danger-date' : '' %>"><%= validade ? validade.toLocaleDateString('pt-BR') : '-' %></td>
+            <td>
+              <form class="promo-form" action="/promocoes/definir" method="post">
+                <input type="hidden" name="produtoId" value="<%= lote.prd_id %>">
+                <input name="valorPromocional" type="number" step="0.01" min="0.01" placeholder="Valor promocional" required>
+                <input name="descricao" value="Promoção por validade próxima" style="min-width:220px;">
+                <button class="btn-vitalis"><i class="fas fa-save"></i> Aplicar</button>
+              </form>
+              <form action="/promocoes/remover" method="post" style="margin-top:8px;">
+                <input type="hidden" name="produtoId" value="<%= lote.prd_id %>">
+                <button class="btn-vitalis btn-outline"><i class="fas fa-times"></i> Remover promoção</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</section>
