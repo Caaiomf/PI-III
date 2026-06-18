@@ -29,6 +29,12 @@ function gravarProduto() {
 
     //if de validação básica
     if(inputCodigo.value != "" && inputNome.value != "" && inputQtde.value != "" && inputQtde.value != '0' && selMarca.value != '0' && selCategoria.value != '0' && inputPreco.value != ""){
+        const quantidade = Number(inputQtde.value);
+        const preco = Number(inputPreco.value);
+        if(!Number.isInteger(quantidade) || quantidade <= 0 || !Number.isFinite(preco) || preco < 0) {
+            alert("Quantidade deve ser maior que zero e preco nao pode ser negativo.");
+            return;
+        }
 
         // var data = {
         //     codigo: inputCodigo.value,
@@ -60,7 +66,7 @@ function gravarProduto() {
                 alert("Produto cadastrado!");
             }
             else{
-                alert("Erro ao cadastrar produto");
+                alert(r.msg || "Erro ao cadastrar produto");
             }
         })
         .catch(e => {

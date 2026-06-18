@@ -1,4 +1,5 @@
 const Database = require('../db/database');
+const { limparCnpjAlfanumerico } = require('../utils/validacoes');
 
 const banco = new Database();
 
@@ -12,7 +13,7 @@ class FornecedorModel {
         const sql = 'INSERT INTO tb_fornecedor (for_nome, for_cnpj, for_telefone, for_email) VALUES (?, ?, ?, ?)';
         const valores = [
             dados.nome,
-            dados.cnpj || null,
+            dados.cnpj ? limparCnpjAlfanumerico(dados.cnpj) : null,
             dados.telefone || null,
             dados.email || null
         ];

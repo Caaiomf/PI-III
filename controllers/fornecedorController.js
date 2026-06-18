@@ -1,4 +1,5 @@
 const FornecedorModel = require('../models/fornecedorModel');
+const { validarCnpj } = require('../utils/validacoes');
 
 class FornecedorController {
     async index(req, res) {
@@ -15,6 +16,11 @@ class FornecedorController {
         if(!nome) {
             const fornecedores = await new FornecedorModel().listar();
             return res.render('fornecedores/index', { fornecedores, mensagem: 'Informe o nome do fornecedor.' });
+        }
+
+        if(cnpj && !validarCnpj(cnpj)) {
+            const fornecedores = await new FornecedorModel().listar();
+            return res.render('fornecedores/index', { fornecedores, mensagem: 'CNPJ inválido.' });
         }
 
         await new FornecedorModel().cadastrar({ nome, cnpj, telefone, email });

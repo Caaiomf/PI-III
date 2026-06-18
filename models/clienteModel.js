@@ -1,5 +1,6 @@
 const Database = require('../db/database');
 const UsuarioModel = require('./usuarioModel');
+const { somenteDigitos } = require('../utils/validacoes');
 
 const banco = new Database();
 
@@ -20,7 +21,7 @@ class ClienteModel {
 
         return await banco.ExecutaComandoNonQuery(
             'INSERT INTO tb_cliente (usu_id, cli_cpf, cli_telefone, cli_data_nascimento) VALUES (?, ?, ?, ?)',
-            [usuarioId, dados && dados.cpf ? dados.cpf : null, dados && dados.telefone ? dados.telefone : null, dados && dados.dataNascimento ? dados.dataNascimento : null]
+            [usuarioId, dados && dados.cpf ? somenteDigitos(dados.cpf) : null, dados && dados.telefone ? dados.telefone : null, dados && dados.dataNascimento ? dados.dataNascimento : null]
         );
     }
 
@@ -55,7 +56,7 @@ class ClienteModel {
         const usuarioCriado = await usuarioModel.obterPorEmail(dados.email);
         const okCliente = await banco.ExecutaComandoNonQuery(
             'INSERT INTO tb_cliente (usu_id, cli_cpf, cli_telefone, cli_data_nascimento) VALUES (?, ?, ?, ?)',
-            [usuarioCriado.usuarioId, dados.cpf || null, dados.telefone || null, dados.dataNascimento || null]
+            [usuarioCriado.usuarioId, dados.cpf ? somenteDigitos(dados.cpf) : null, dados.telefone || null, dados.dataNascimento || null]
         );
 
         return {

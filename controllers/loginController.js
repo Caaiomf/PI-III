@@ -1,5 +1,6 @@
 const UsuarioModel = require("../models/usuarioModel");
 const ClienteModel = require("../models/clienteModel");
+const { validarCpf, validarDataNascimento } = require("../utils/validacoes");
 
 class LoginController {
 
@@ -59,6 +60,14 @@ class LoginController {
 
         if (!nome || !email || !senha) {
             return res.render('login/index', { layout: false, tipo: 'cadastro', msg: 'Preencha nome, e-mail e senha.' });
+        }
+
+        if (cpf && !validarCpf(cpf)) {
+            return res.render('login/index', { layout: false, tipo: 'cadastro', msg: 'CPF inválido.' });
+        }
+
+        if (!validarDataNascimento(dataNascimento)) {
+            return res.render('login/index', { layout: false, tipo: 'cadastro', msg: 'Data de nascimento inválida ou maior que a data de hoje.' });
         }
 
         if (String(email).toLowerCase().endsWith('@vitalis.com')) {

@@ -1,4 +1,5 @@
 const Database = require('../db/database');
+const { inteiroPositivo, dinheiroNaoNegativo } = require('../utils/validacoes');
 
 const banco = new Database();
 
@@ -56,10 +57,13 @@ class CompraModel {
         const status = compra.status || 'recebido';
         for(const it of compra.items) {
             const prd = it.prd_id || null;
-            const q = it.quantidade || 0;
-            const v = it.valor || 0;
+            const q = inteiroPositivo(it.quantidade);
+            const v = dinheiroNaoNegativo(it.valor || 0);
             const lote = it.lote || null;
             const validade = it.validade || null;
+            if(!prd || q === null || v === null) {
+                throw new Error('Item de compra inválido.');
+            }
             await conn.ExecutaComandoNonQuery(
                 'INSERT INTO tb_compra (com_fornecedor, prd_id, com_quantidade, com_valorunitario, com_lote, com_validade, com_status, com_data, com_datarecebimento) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [fornecedor, prd, q, v, lote, validade, status, data, status === 'recebido' ? new Date() : null]
@@ -99,14 +103,20 @@ class CompraModel {
         const fornecedor = compra.fornecedor;
         const data = compra.data;
         const status = compra.status;
+        const item = compra.items && compra.items[0] ? compra.items[0] : null;
+        const quantidade = item ? inteiroPositivo(item.quantidade) : null;
+        const valor = item ? dinheiroNaoNegativo(item.valor || 0) : null;
+        if(item && (quantidade === null || valor === null)) {
+            throw new Error('Item de compra inválido.');
+        }
         await banco.ExecutaComandoNonQuery(
             'UPDATE tb_compra SET com_fornecedor = ?, com_quantidade = ?, com_valorunitario = ?, com_lote = ?, com_validade = ?, com_status = ?, com_datarecebimento = ? WHERE com_id = ?',
             [
                 fornecedor,
-                compra.items && compra.items[0] ? compra.items[0].quantidade : null,
-                compra.items && compra.items[0] ? compra.items[0].valor : null,
-                compra.items && compra.items[0] ? compra.items[0].lote : null,
-                compra.items && compra.items[0] ? compra.items[0].validade : null,
+                item ? quantidade : null,
+                item ? valor : null,
+                item ? item.lote : null,
+                item ? item.validade : null,
                 status,
                 compra.datarecebimento || null,
                 id
@@ -136,9 +146,13 @@ class CompraModel {
         );
 
         if(recebeuAgora) {
+            const quantidade = inteiroPositivo(compra.com_quantidade);
+            if(quantidade === null) {
+                return { ok: false, msg: 'Quantidade da compra inválida. Estoque não atualizado.' };
+            }
             await banco.ExecutaComandoNonQuery(
                 'UPDATE tb_produto SET prd_quantidade = prd_quantidade + ? WHERE prd_id = ?',
-                [compra.com_quantidade, compra.prd_id]
+                [quantidade, compra.prd_id]
             );
         }
 

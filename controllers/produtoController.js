@@ -2,6 +2,7 @@ const CategoriaModel = require("../models/categoriaModel");
 const MarcaModel = require("../models/marcaModel");
 const ProdutoModel = require("../models/produtoModel");
 const fs = require("fs");
+const { inteiroPositivo, inteiroNaoNegativo, dinheiroNaoNegativo } = require("../utils/validacoes");
 
 class ProdutoController {
 
@@ -46,10 +47,16 @@ class ProdutoController {
         if(req.body.codigo != "" && req.body.nome != "" && 
         req.body.quantidade != "" && req.body.quantidade  != '0' && 
         req.body.marca != '0' && req.body.categoria  != '0' && req.body.preco != "") {
+            const quantidade = inteiroPositivo(req.body.quantidade);
+            const preco = dinheiroNaoNegativo(req.body.preco);
+            if(quantidade === null || preco === null) {
+                return res.send({ ok: false, msg: "Quantidade deve ser maior que zero e preço não pode ser negativo." });
+            }
+
             const imagem = req.file != null ? req.file.filename : 'produto-sem-imagem.webp';
-            let produto = new ProdutoModel(0, req.body.codigo, 
-                req.body.nome, req.body.quantidade, 
-                req.body.categoria, req.body.marca, "", "", imagem, req.body.preco);
+            let produto = new ProdutoModel(0, req.body.codigo,
+                req.body.nome, quantidade,
+                req.body.categoria, req.body.marca, "", "", imagem, preco);
 
             ok = await produto.gravar();
         }
@@ -77,8 +84,13 @@ class ProdutoController {
     async alterarProduto(req, res) {
         var ok = true;
         if(req.body.codigo != "" && req.body.nome != "" && req.body.quantidade != "" && req.body.marca != '0' && req.body.categoria  != '0') {
+            const quantidade = inteiroNaoNegativo(req.body.quantidade);
+            const preco = dinheiroNaoNegativo(req.body.preco);
+            if(quantidade === null || preco === null) {
+                return res.send({ ok: false, msg: "Quantidade e preço não podem ser negativos." });
+            }
 
-            let produto = new ProdutoModel(req.body.id, req.body.codigo, req.body.nome, req.body.quantidade, req.body.categoria, req.body.marca, "", "", "", req.body.preco);
+            let produto = new ProdutoModel(req.body.id, req.body.codigo, req.body.nome, quantidade, req.body.categoria, req.body.marca, "", "", "", preco);
             let produtoOld = await produto.buscarProduto(req.body.id);
             if(req.file != null) {
                 //veio imagem, deletar a antiga;

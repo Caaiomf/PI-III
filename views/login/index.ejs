@@ -159,7 +159,7 @@
         </div>
         <div class="form-group">
           <label for="cadCpf">CPF</label>
-          <div class="input-wrap"><i class="fas fa-id-card"></i><input type="text" id="cadCpf" name="cpf" placeholder="000.000.000-00"></div>
+          <div class="input-wrap"><i class="fas fa-id-card"></i><input type="text" id="cadCpf" name="cpf" maxlength="14" placeholder="000.000.000-00"></div>
         </div>
         <div class="form-group">
           <label for="cadTelefone">Telefone</label>
@@ -186,6 +186,13 @@
         document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
       });
     });
+
+    const nascimento = document.getElementById('cadNascimento');
+    if(nascimento) {
+      const hoje = new Date();
+      hoje.setMinutes(hoje.getMinutes() - hoje.getTimezoneOffset());
+      nascimento.max = hoje.toISOString().slice(0, 10);
+    }
   </script>
 </body>
 </html>

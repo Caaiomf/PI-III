@@ -1,6 +1,7 @@
 const PerfilModel = require("../models/perfilModel");
 const UsuarioModel = require("../models/usuarioModel");
 const ClienteModel = require("../models/clienteModel");
+const { validarCpf, validarDataNascimento } = require("../utils/validacoes");
 
 class UsuarioController{
 
@@ -49,13 +50,23 @@ class UsuarioController{
                 });
             }
 
+            const perfilSelecionado = await obterDescricaoPerfil(req.body.perfil);
+            if(perfilSelecionado.includes('cliente')) {
+                if(req.body.cpf && !validarCpf(req.body.cpf)) {
+                    return resp.send({ ok: false, msg: "CPF inválido!" });
+                }
+
+                if(!validarDataNascimento(req.body.dataNascimento)) {
+                    return resp.send({ ok: false, msg: "Data de nascimento inválida ou maior que a data de hoje!" });
+                }
+            }
+
             let usuario = new UsuarioModel(0, req.body.nome, req.body.email, req.body.senha, req.body.ativo, req.body.perfil);
 
             let result = await usuario.cadastrar();
 
             if(result) {
                 const usuarioCriado = await usuarioConsulta.obterPorEmail(req.body.email);
-                const perfilSelecionado = await obterDescricaoPerfil(req.body.perfil);
                 if(usuarioCriado && perfilSelecionado.includes('cliente')) {
                     await new ClienteModel().garantirPorUsuario(usuarioCriado.usuarioId, req.body);
                 }
@@ -124,12 +135,22 @@ class UsuarioController{
                 });
             }
 
+            const perfilSelecionado = await obterDescricaoPerfil(req.body.perfil);
+            if(perfilSelecionado.includes('cliente')) {
+                if(req.body.cpf && !validarCpf(req.body.cpf)) {
+                    return res.send({ ok: false, msg: "CPF inválido!" });
+                }
+
+                if(!validarDataNascimento(req.body.dataNascimento)) {
+                    return res.send({ ok: false, msg: "Data de nascimento inválida ou maior que a data de hoje!" });
+                }
+            }
+
             let usuario = new UsuarioModel(req.body.id, req.body.nome, req.body.email, req.body.senha, req.body.ativo, req.body.perfil);
 
             let result = await usuario.cadastrar();
 
             if(result) {
-                const perfilSelecionado = await obterDescricaoPerfil(req.body.perfil);
                 if(perfilSelecionado.includes('cliente')) {
                     await new ClienteModel().garantirPorUsuario(req.body.id, req.body);
                 }

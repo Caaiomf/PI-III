@@ -2,6 +2,7 @@ const PedidoItemModel = require("../models/pedidoItemModel");
 const PedidoModel = require("../models/pedidoModel");
 const ProdutoModel = require("../models/produtoModel");
 const ClienteModel = require("../models/clienteModel");
+const { inteiroPositivo } = require("../utils/validacoes");
 
 class PedidoController {
 
@@ -50,14 +51,14 @@ class PedidoController {
         const produtoModel = new ProdutoModel();
 
         for(let i = 0; i < itens.length; i++) {
-            const quantidade = parseInt(itens[i].quantidade);
+            const quantidade = inteiroPositivo(itens[i].quantidade);
             const produto = await produtoModel.buscarProduto(itens[i].id);
 
             if(!produto) {
                 return res.send({ ok: false, msg: "Produto não encontrado." });
             }
 
-            if(!quantidade || quantidade <= 0) {
+            if(quantidade === null) {
                 return res.send({ ok: false, msg: "Quantidade inválida no carrinho." });
             }
 
@@ -84,7 +85,7 @@ class PedidoController {
 
         for(let i = 0; i < itens.length; i++) {
             const produto = await produtoModel.buscarProduto(itens[i].id);
-            const quantidade = parseInt(itens[i].quantidade);
+            const quantidade = inteiroPositivo(itens[i].quantidade);
 
             const baixou = await produtoModel.baixarEstoque(produto.produtoId, quantidade);
             if(!baixou) {

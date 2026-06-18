@@ -1,4 +1,5 @@
 const Database = require('../db/database');
+const { inteiroPositivo, dinheiroNaoNegativo } = require('../utils/validacoes');
 
 const banco = new Database();
 
@@ -51,14 +52,20 @@ class RecebimentoModel {
         );
 
         for (const item of itens) {
+            const quantidade = inteiroPositivo(item.quantidade);
+            const valor = dinheiroNaoNegativo(item.valor || 0);
+            if(!item.produtoId || quantidade === null || valor === null) {
+                return false;
+            }
+
             await banco.ExecutaComandoNonQuery(
                 'INSERT INTO tb_recebimentoitens (rec_id, prd_id, rit_quantidade, rit_valorunidade, rit_validade) VALUES (?, ?, ?, ?, ?)',
-                [recId, item.produtoId, item.quantidade, item.valor || 0, item.validade || null]
+                [recId, item.produtoId, quantidade, valor, item.validade || null]
             );
 
             await banco.ExecutaComandoNonQuery(
                 'UPDATE tb_produto SET prd_quantidade = prd_quantidade + ? WHERE prd_id = ?',
-                [item.quantidade, item.produtoId]
+                [quantidade, item.produtoId]
             );
         }
 

@@ -1,5 +1,6 @@
 const Database = require('../db/database');
 const fs = require("fs");
+const { inteiroPositivo, inteiroNaoNegativo, dinheiroNaoNegativo } = require('../utils/validacoes');
 
 const conexao = new Database();
 class ProdutoModel {
@@ -76,10 +77,14 @@ class ProdutoModel {
     }
 
     async gravar() {
+        const quantidade = this.#produtoId == 0 ? inteiroPositivo(this.#produtoQuantidade) : inteiroNaoNegativo(this.#produtoQuantidade);
+        const valor = dinheiroNaoNegativo(this.#produtoValor);
+        if(quantidade === null || valor === null) return false;
+
         if(this.#produtoId == 0){
             let sql = "insert into tb_produto (prd_cod, prd_nome, prd_quantidade, cat_id, mar_id, prd_imagem, prd_valor) values (?, ?, ?, ?, ?, ?, ?)";
 
-            let valores = [this.#produtoCodigo, this.#produtoNome, this.#produtoQuantidade, this.#categoriaId, this.#marcaId, this.#produtoImagem, this.#produtoValor];
+            let valores = [this.#produtoCodigo, this.#produtoNome, quantidade, this.#categoriaId, this.#marcaId, this.#produtoImagem, valor];
 
             return await conexao.ExecutaComandoNonQuery(sql, valores);
         }
@@ -87,10 +92,10 @@ class ProdutoModel {
             //alterar
             let sql = "update tb_produto set prd_cod = ?, prd_nome =?, prd_quantidade= ?, cat_id = ?, mar_id = ?, prd_imagem = ?, prd_valor = ? where prd_id = ?";
 
-            let valores = [this.#produtoCodigo, this.#produtoNome, 
-                this.#produtoQuantidade, 
+            let valores = [this.#produtoCodigo, this.#produtoNome,
+                quantidade,
                 this.#categoriaId, 
-                this.#marcaId, this.#produtoImagem, this.#produtoValor, this.#produtoId];
+                this.#marcaId, this.#produtoImagem, valor, this.#produtoId];
 
             return await conexao.ExecutaComandoNonQuery(sql, valores) > 0;
         }
@@ -127,13 +132,19 @@ class ProdutoModel {
     }
 
     async baixarEstoque(id, quantidade) {
+        const qtd = inteiroPositivo(quantidade);
+        if(qtd === null) return false;
+
         let sql = 'update tb_produto set prd_quantidade = prd_quantidade - ? where prd_id = ? and prd_quantidade >= ?';
-        return await conexao.ExecutaComandoNonQuery(sql, [quantidade, id, quantidade]);
+        return await conexao.ExecutaComandoNonQuery(sql, [qtd, id, qtd]);
     }
 
     async aumentarEstoque(id, quantidade) {
+        const qtd = inteiroPositivo(quantidade);
+        if(qtd === null) return false;
+
         let sql = 'update tb_produto set prd_quantidade = prd_quantidade + ? where prd_id = ?';
-        return await conexao.ExecutaComandoNonQuery(sql, [quantidade, id]);
+        return await conexao.ExecutaComandoNonQuery(sql, [qtd, id]);
     }
 
     async definirPromocao(id, valorPromocional, descricao) {

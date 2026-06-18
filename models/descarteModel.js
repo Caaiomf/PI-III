@@ -1,4 +1,5 @@
 const Database = require('../db/database');
+const { inteiroPositivo } = require('../utils/validacoes');
 
 const banco = new Database();
 
@@ -38,6 +39,9 @@ class DescarteModel {
     }
 
     async registrar(dados) {
+        const quantidade = inteiroPositivo(dados.quantidade);
+        if(quantidade === null) return false;
+
         const sql = `
             INSERT INTO tb_descarte
                 (prd_id, fun_id, des_quantidade, des_motivo, des_data, des_observacao, des_empresa, des_data_vencimento)
@@ -46,7 +50,7 @@ class DescarteModel {
         const valores = [
             dados.produtoId,
             dados.funcionarioId || null,
-            dados.quantidade,
+            quantidade,
             dados.motivo,
             dados.observacao || null,
             dados.empresa || null,

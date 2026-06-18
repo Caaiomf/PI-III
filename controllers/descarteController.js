@@ -1,5 +1,6 @@
 const DescarteModel = require('../models/descarteModel');
 const DescarteEmpresaModel = require('../models/descarteEmpresaModel');
+const { validarCnpj, inteiroPositivo } = require('../utils/validacoes');
 
 class DescarteController {
     async index(req, res) {
@@ -24,20 +25,24 @@ class DescarteController {
             return res.redirect('/descartes?msg=' + encodeURIComponent('Informe o nome da empresa de descarte.'));
         }
 
+        if(cnpj && !validarCnpj(cnpj)) {
+            return res.redirect('/descartes?msg=' + encodeURIComponent('CNPJ inválido.'));
+        }
+
         await new DescarteEmpresaModel().cadastrar({ nome, cnpj, telefone, email });
         res.redirect('/descartes?msg=' + encodeURIComponent('Empresa de descarte cadastrada com sucesso.'));
     }
 
     async registrar(req, res) {
         const produtoId = req.body.produtoId;
-        const quantidade = parseInt(req.body.quantidade);
+        const quantidade = inteiroPositivo(req.body.quantidade);
         const motivo = req.body.motivo || 'VENCIDO';
         const empresa = req.body.empresa || '';
         const validade = req.body.validade || null;
         const observacao = req.body.observacao || '';
         const funcionarioId = 1;
 
-        if(!produtoId || !quantidade || quantidade <= 0 || !empresa || !validade) {
+        if(!produtoId || quantidade === null || !empresa || !validade) {
             return res.redirect('/descartes?msg=' + encodeURIComponent('Informe lote, empresa, quantidade e validade para registrar o descarte.'));
         }
 

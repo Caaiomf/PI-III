@@ -1,6 +1,7 @@
 const CompraModel = require('../models/compraModel');
 const ProdutoModel = require('../models/produtoModel');
 const FornecedorModel = require('../models/fornecedorModel');
+const { inteiroPositivo, dinheiroNaoNegativo } = require('../utils/validacoes');
 
 class CompraController {
     async index(req, res) {
@@ -38,6 +39,15 @@ class CompraController {
             if(!item.prd_id || !item.quantidade || !item.valor || !item.lote || !item.validade) {
                 return res.send({ ok: false, msg: 'Informe produto, quantidade, valor, lote e validade em todos os itens.' });
             }
+
+            const quantidade = inteiroPositivo(item.quantidade);
+            const valor = dinheiroNaoNegativo(item.valor);
+            if(quantidade === null || valor === null) {
+                return res.send({ ok: false, msg: 'Quantidade deve ser maior que zero e valor não pode ser negativo.' });
+            }
+
+            item.quantidade = quantidade;
+            item.valor = valor;
         }
 
         const m = new CompraModel();
@@ -82,6 +92,15 @@ class CompraController {
     async atualizar(req, res) {
         const body = req.body;
         if(!body || !body.id) return res.send({ ok: false, msg: 'ID não informado.' });
+        if(body.items && body.items[0]) {
+            const quantidade = inteiroPositivo(body.items[0].quantidade);
+            const valor = dinheiroNaoNegativo(body.items[0].valor);
+            if(quantidade === null || valor === null) {
+                return res.send({ ok: false, msg: 'Quantidade deve ser maior que zero e valor não pode ser negativo.' });
+            }
+            body.items[0].quantidade = quantidade;
+            body.items[0].valor = valor;
+        }
         const m = new CompraModel();
         try {
             const ok = await m.atualizar(body);

@@ -32,6 +32,12 @@ function alterarProduto() {
 
     //if de validação básica
     if(inputCodigo.value != "" && inputNome.value != "" && inputQtde.value != "" && selMarca.value != '0' && selCategoria.value != '0' && inputPreco.value != ""){
+        const quantidade = Number(inputQtde.value);
+        const preco = Number(inputPreco.value);
+        if(!Number.isInteger(quantidade) || quantidade < 0 || !Number.isFinite(preco) || preco < 0) {
+            alert("Quantidade e preco nao podem ser negativos.");
+            return;
+        }
 
         let formData = new FormData();
         
@@ -57,7 +63,7 @@ function alterarProduto() {
                 alert("Produto alterado!");
             }
             else{
-                alert("Erro ao alterar produto");
+                alert(r.msg || "Erro ao alterar produto");
             }
         })
         .catch(e => {
